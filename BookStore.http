@@ -1,0 +1,15 @@
+﻿@BookStore_HostAddress = https://localhost:7206
+
+###
+GET {{BookStore_HostAddress}}/books
+
+###
+
+POST {{BookStore_HostAddress}}/books
+Content-Type: application/json
+{
+    "title": "Harry Potter",
+    "description": "This is a description"
+} 
+
+###
