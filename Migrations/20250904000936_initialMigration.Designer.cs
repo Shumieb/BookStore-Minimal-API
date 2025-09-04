@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStore.Migrations
 {
     [DbContext(typeof(BookStoreDb))]
-    [Migration("20250903234210_Fixed")]
-    partial class Fixed
+    [Migration("20250904000936_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,6 +42,9 @@ namespace BookStore.Migrations
                     b.Property<int?>("AuthorId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -52,7 +55,23 @@ namespace BookStore.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("BookStore.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("BookStore.Models.Book", b =>
@@ -61,7 +80,13 @@ namespace BookStore.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
+                    b.HasOne("BookStore.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
                     b.Navigation("Author");
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

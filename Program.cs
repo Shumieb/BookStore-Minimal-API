@@ -11,7 +11,9 @@ var app = builder.Build();
 // book routes
 RouteGroupBuilder books = app.MapGroup("/books");
 books.MapGet("/", GetAllBooks);
+books.MapGet("/{id}", GetBook);
 books.MapPost("/", CreateBook);
+
 
 app.Run();
 
@@ -21,7 +23,21 @@ static async Task<IResult> GetAllBooks(BookStoreDb db)
     return TypedResults.Ok(
         await db.Books
         .Include(x => x.Author)
+        .Include(x => x.Category)
         .ToArrayAsync());
+}
+
+// get book by ID
+static async Task<IResult> GetBook(int id, BookStoreDb db)
+{
+    var book = await db.Books
+        .Include(x => x.Author)
+        .Include(x => x.Category)
+        .FirstOrDefaultAsync(x => x.Id == id);
+
+    return book is not null
+        ? TypedResults.Ok(book)
+        : TypedResults.NotFound();
 }
 
 // create a book

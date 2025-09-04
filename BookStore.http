@@ -13,3 +13,8 @@ Content-Type: application/json
 } 
 
 ###
+
+@id=2
+GET {{BookStore_HostAddress}}/books/{{id}}
+
+###
