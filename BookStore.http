@@ -59,3 +59,29 @@ Content-Type: application/json
     "name": "Author 2"
 } 
 ###
+
+GET {{BookStore_HostAddress}}/categories
+
+###
+
+POST {{BookStore_HostAddress}}/categories
+Content-Type: application/json
+{
+    "name": "Scifi"
+}
+###
+
+DELETE {{BookStore_HostAddress}}/categories/6
+
+###
+
+GET {{BookStore_HostAddress}}/categories/1
+
+###
+
+PUT {{BookStore_HostAddress}}/categories/7
+Content-Type: application/json
+{
+    "name": "Drama"
+}
+###

@@ -24,6 +24,13 @@ authors.MapPost("/", CreateAuthor);
 authors.MapPut("/{id}", UpdateAuthor);
 authors.MapDelete("/{id}", DeleteAuthor);
 
+// categories routes
+RouteGroupBuilder categories = app.MapGroup("/categories");
+categories.MapGet("/", GetAllCategories);
+categories.MapGet("/{id}", GetCategory);
+categories.MapPost("/", CreateCategory);
+categories.MapPut("/{id}", UpdateCategory);
+categories.MapDelete("/{id}", DeleteCategory);
 
 app.Run();
 
@@ -142,6 +149,61 @@ static async Task<IResult> DeleteAuthor(int id, BookStoreDb db)
     }
     return TypedResults.NoContent();
 }
+
+// get all categories
+static async Task<IResult> GetAllCategories(BookStoreDb db)
+{
+    return TypedResults.Ok(
+        await db.Categories
+        .ToArrayAsync());
+}
+
+// get category by id
+static async Task<IResult> GetCategory(int id, BookStoreDb db)
+{
+    var category = await db.Categories.FindAsync(id);
+
+    return category is not null
+        ? TypedResults.Ok(category)
+        : TypedResults.NotFound();
+}
+
+// create a category
+static async Task<IResult> CreateCategory(Category category, BookStoreDb db)
+{
+    await db.Categories.AddAsync(category);
+    await db.SaveChangesAsync();
+
+    return TypedResults.Created($"/categories/{category.Id}", category);
+}
+
+// update a category
+static async Task<IResult> UpdateCategory(int id, Category category, BookStoreDb db)
+{
+
+    var foundCategory = await db.Categories.FindAsync(id);
+
+    if (foundCategory is null) return TypedResults.NotFound();
+
+    foundCategory.Name = category.Name;
+
+    await db.SaveChangesAsync();
+    return TypedResults.Ok(foundCategory);
+}
+
+// delete a category
+static async Task<IResult> DeleteCategory(int id, BookStoreDb db)
+{
+    if (await db.Categories.FindAsync(id) is Category category)
+    {
+        db.Categories.Remove(category);
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
+    return TypedResults.NoContent();
+}
+
+
 
 
 
