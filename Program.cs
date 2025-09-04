@@ -13,6 +13,16 @@ RouteGroupBuilder books = app.MapGroup("/books");
 books.MapGet("/", GetAllBooks);
 books.MapGet("/{id}", GetBook);
 books.MapPost("/", CreateBook);
+books.MapPut("/{id}", UpdateBook);
+books.MapDelete("/{id}", DeleteBook);
+
+// author routes
+RouteGroupBuilder authors = app.MapGroup("/authors");
+authors.MapGet("/", GetAllAuthors);
+authors.MapGet("/{id}", GetAuthor);
+authors.MapPost("/", CreateAuthor);
+authors.MapPut("/{id}", UpdateAuthor);
+authors.MapDelete("/{id}", DeleteAuthor);
 
 
 app.Run();
@@ -47,6 +57,90 @@ static async Task<IResult> CreateBook(Book book, BookStoreDb db)
     await db.SaveChangesAsync();
 
     return TypedResults.Created($"/shows/{book.Id}", book);
+}
+
+// update a book
+static async Task<IResult> UpdateBook(int id, Book book, BookStoreDb db)
+{
+
+    var foundBook = await db.Books.FindAsync(id);
+
+    if (foundBook is null) return TypedResults.NotFound();
+
+    foundBook.Title = book.Title;
+    foundBook.Description = book.Description;
+    foundBook.AuthorId = book.AuthorId;
+    foundBook.Author = book.Author;
+    foundBook.CategoryId = book.CategoryId;
+    foundBook.Category = book.Category;    
+
+    await db.SaveChangesAsync();
+    return TypedResults.Ok(foundBook);
+}
+
+// delete a book
+static async Task<IResult> DeleteBook(int id, BookStoreDb db)
+{
+    if (await db.Books.FindAsync(id) is Book book)
+    {
+        db.Books.Remove(book);
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
+    return TypedResults.NoContent();
+}
+
+// get all authors
+static async Task<IResult> GetAllAuthors(BookStoreDb db)
+{
+    return TypedResults.Ok(
+        await db.Authors
+        .ToArrayAsync());
+}
+
+// get author by id
+static async Task<IResult> GetAuthor(int id, BookStoreDb db)
+{
+    var author = await db.Authors.FindAsync(id);
+
+    return author is not null
+        ? TypedResults.Ok(author)
+        : TypedResults.NotFound();
+}
+
+// create an author
+static async Task<IResult> CreateAuthor(Author author, BookStoreDb db)
+{
+    await db.Authors.AddAsync(author);
+    await db.SaveChangesAsync();
+
+    return TypedResults.Created($"/authors/{author.Id}", author);
+}
+
+// update an author
+static async Task<IResult> UpdateAuthor(int id, Author author, BookStoreDb db)
+{
+
+    var foundAuthor = await db.Authors.FindAsync(id);
+
+    if (foundAuthor is null) return TypedResults.NotFound();
+
+    foundAuthor.Name = author.Name;
+
+    await db.SaveChangesAsync();
+    return TypedResults.Ok(foundAuthor);
+}
+
+// delete an author
+static async Task<IResult> DeleteAuthor(int id, BookStoreDb db)
+{
+    if (await db.Authors.FindAsync(id) is Author author)
+    {
+        db.Authors.Remove(author);
+        await db.SaveChangesAsync();
+        return TypedResults.NoContent();
+    }
+    return TypedResults.NoContent();
 }
 
 

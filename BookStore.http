@@ -18,3 +18,44 @@ Content-Type: application/json
 GET {{BookStore_HostAddress}}/books/{{id}}
 
 ###
+
+PUT {{BookStore_HostAddress}}/books/2
+Content-Type: application/json
+{
+    "title": "Harry Potter",
+    "description": "This is a description",
+    "authorid": 4
+} 
+
+###
+
+@id=3
+DELETE {{BookStore_HostAddress}}/books/{{id}}
+
+###
+
+GET {{BookStore_HostAddress}}/authors
+
+###
+
+POST {{BookStore_HostAddress}}/authors
+Content-Type: application/json
+{
+    "name": "JK Rowling"
+} 
+
+###
+DELETE {{BookStore_HostAddress}}/authors/3
+
+###
+
+GET {{BookStore_HostAddress}}/authors/1
+
+###
+
+PUT {{BookStore_HostAddress}}/authors/4
+Content-Type: application/json
+{
+    "name": "Author 2"
+} 
+###
